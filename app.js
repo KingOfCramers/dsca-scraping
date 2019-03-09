@@ -10,7 +10,8 @@ const asyncForEach = async(array, callback) => {
     }
 };
 
-const range = Array(36).fill(1).map((x, y) => x + y);
+let range = Array(36).fill(1).map((x, y) => x + y);
+// range = [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
 const fetchContracts = async (url) => {
     const browser = await pupeteer.launch({ headless: false });
     const page = await browser.newPage();
@@ -26,7 +27,7 @@ const fetchContracts = async (url) => {
         links.push(linkPath);
     });
 
-    let allFiles = [];
+    let allFiles = []; 
 
     await asyncForEach(links, async(link) => {
         let file = { date : '', contracts: [] };
@@ -52,7 +53,7 @@ const fetchContracts = async (url) => {
 };
 
 let execute = async () => {
-    for(const pageNum in range){
+    for(const pageNum of range){
         await fetchContracts(`https://dod.defense.gov/News/Contracts/?Page=${pageNum}`)
                 .then(async(allFiles) => {
                     asyncForEach(allFiles, async({ date, contracts }) => {
