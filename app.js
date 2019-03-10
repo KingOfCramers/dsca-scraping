@@ -11,7 +11,7 @@ const asyncForEach = async(array, callback) => {
 };
 
 let range = Array(36).fill(1).map((x, y) => x + y);
-// range = [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
+range = [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
 const fetchContracts = async (url) => {
     const browser = await pupeteer.launch({ headless: false });
     const page = await browser.newPage();
