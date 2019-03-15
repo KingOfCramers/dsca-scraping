@@ -13,7 +13,7 @@ const asyncForEach = async(array, callback) => {
 let range = Array(36).fill(1).map((x, y) => x + y);
 range = [17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38];
 const fetchContracts = async (url) => {
-    const browser = await pupeteer.launch({ headless: false });
+    const browser = await pupeteer.launch({ headless: true });
     const page = await browser.newPage();
     await page.goto(url, { waitUntil: 'networkidle2' }); // Ensure no network requests are happening (in last 500ms).
     let html = await page.content();
@@ -40,6 +40,7 @@ const fetchContracts = async (url) => {
         let dateTextLong = ($(date).text());
         let dateText = moment(dateTextLong.substring(14, dateTextLong.length)).format("M-D-YYYY")
         file.date = dateText;
+        file.link = link;
 
         let contracts = $('div.article-body p');
         contracts.each((i,contract) => {
@@ -56,11 +57,14 @@ let execute = async () => {
     for(const pageNum of range){
         await fetchContracts(`https://dod.defense.gov/News/Contracts/?Page=${pageNum}`)
                 .then(async(allFiles) => {
-                    asyncForEach(allFiles, async({ date, contracts }) => {
+                    asyncForEach(allFiles, async({ date, contracts, link }) => {
                         var file = fs.createWriteStream(path.join(__dirname, `${date}.txt`));        
                         file.on('error', (err) => { 
                             throw err;
                         });
+
+                        await file.write(link.concat(' \n'));
+
                         contracts.forEach((p) => { 
                             file.write(p.concat(' \n')); 
                         });
